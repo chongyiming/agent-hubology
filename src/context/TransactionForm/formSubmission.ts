@@ -100,7 +100,7 @@ export const submitTransactionForm = async (state: TransactionFormState): Promis
       throw new Error(errorMessage);
     }
     
-    // Get current user
+    // Get current user - using auth.getUser() to avoid RLS issues
     const { data: userData, error: userError } = await supabase.auth.getUser();
     
     if (userError) {

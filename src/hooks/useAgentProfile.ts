@@ -7,7 +7,7 @@ export const useAgentProfile = () => {
     queryKey: ['agentProfile'],
     queryFn: async () => {
       try {
-        // Use edge function which uses the security definer function to avoid recursion
+        // First try to use the edge function that calls the security definer function
         const { data: response, error: edgeFunctionError } = await supabase
           .functions.invoke('get_agent_profile', {});
           
@@ -17,12 +17,22 @@ export const useAgentProfile = () => {
         }
         
         if (response?.data) {
+          console.log('Successfully fetched agent profile via edge function:', response.data);
           return response.data;
         }
         
-        // Fallback to direct database call using our new security definer function
+        // Fallback to direct database call using our security definer function
+        // This avoids the infinite recursion issue with direct queries
+        const { data: authData } = await supabase.auth.getUser();
+        const userId = authData.user?.id;
+        
+        if (!userId) {
+          throw new Error('User not authenticated');
+        }
+        
+        console.log('Fetching agent profile with user ID:', userId);
         const { data, error } = await supabase
-          .rpc('get_agent_profile_by_id', { user_id: (await supabase.auth.getUser()).data.user?.id })
+          .rpc('get_agent_profile_by_id', { user_id: userId })
           .single();
           
         if (error) {
@@ -30,6 +40,7 @@ export const useAgentProfile = () => {
           throw error;
         }
         
+        console.log('Successfully fetched agent profile via RPC:', data);
         return data;
       } catch (error) {
         console.error('Failed to load agent profile:', error);
@@ -51,6 +62,7 @@ export const useAgentProfile = () => {
           total_transactions: 12
         };
         
+        console.warn('Using mock agent profile data as fallback:', mockAgentProfile);
         return mockAgentProfile;
       }
     },
