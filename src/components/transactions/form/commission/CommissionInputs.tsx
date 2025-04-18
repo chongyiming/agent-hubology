@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { useTransactionForm } from '@/context/TransactionForm';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface CommissionInputsProps {
   isRental: boolean;
@@ -15,8 +17,8 @@ const CommissionInputs: React.FC<CommissionInputsProps> = ({
   ownerCommissionAmount, 
   setOwnerCommissionAmount 
 }) => {
-  const { state, updateFormData } = useTransactionForm();
-  const { formData } = state;
+  const { state, updateFormData, clearError, setError } = useTransactionForm();
+  const { formData, errors } = state;
   
   // Get transaction value and commission rate from form data
   const transactionValue = formData.transactionValue || 0;
@@ -24,21 +26,42 @@ const CommissionInputs: React.FC<CommissionInputsProps> = ({
   
   // Calculate commission amount when transaction value or rate changes
   useEffect(() => {
-    const calculatedAmount = (transactionValue * commissionRate) / 100;
-    updateFormData({ commissionAmount: calculatedAmount });
-    setOwnerCommissionAmount(calculatedAmount);
-  }, [transactionValue, commissionRate, updateFormData, setOwnerCommissionAmount]);
+    if (transactionValue > 0 && commissionRate > 0) {
+      const calculatedAmount = (transactionValue * commissionRate) / 100;
+      updateFormData({ commissionAmount: calculatedAmount });
+      setOwnerCommissionAmount(calculatedAmount);
+      
+      // Clear any existing errors if we now have a valid commission
+      if (calculatedAmount > 0) {
+        clearError('commissionAmount');
+      }
+    }
+  }, [transactionValue, commissionRate, updateFormData, setOwnerCommissionAmount, clearError]);
   
   // Handle transaction value change
   const handleTransactionValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value) || 0;
     updateFormData({ transactionValue: value });
+    
+    // Validate immediately
+    if (value <= 0) {
+      setError('transactionValue', 'Transaction value must be greater than zero');
+    } else {
+      clearError('transactionValue');
+    }
   };
   
   // Handle commission rate change
   const handleCommissionRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rate = parseFloat(e.target.value) || 0;
     updateFormData({ commissionRate: rate });
+    
+    // Validate immediately
+    if (rate <= 0) {
+      setError('commissionRate', 'Commission rate must be greater than zero');
+    } else {
+      clearError('commissionRate');
+    }
   };
   
   // Handle manual commission amount change (overrides the calculated amount)
@@ -46,10 +69,24 @@ const CommissionInputs: React.FC<CommissionInputsProps> = ({
     const amount = parseFloat(e.target.value) || 0;
     setOwnerCommissionAmount(amount);
     updateFormData({ commissionAmount: amount });
+    
+    // Validate immediately
+    if (amount <= 0) {
+      setError('commissionAmount', 'Commission amount must be greater than zero');
+    } else {
+      clearError('commissionAmount');
+    }
   };
   
   return (
     <div className="space-y-4">
+      {errors.transactionValue && (
+        <Alert variant="destructive" className="py-2">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertDescription>{errors.transactionValue}</AlertDescription>
+        </Alert>
+      )}
+      
       <div>
         <Label htmlFor="transactionValue">
           {isRental ? 'Rental Value' : 'Transaction Value'}
@@ -70,6 +107,13 @@ const CommissionInputs: React.FC<CommissionInputsProps> = ({
         </div>
       </div>
       
+      {errors.commissionRate && (
+        <Alert variant="destructive" className="py-2">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertDescription>{errors.commissionRate}</AlertDescription>
+        </Alert>
+      )}
+      
       <div>
         <Label htmlFor="commissionRate">Commission Rate (%)</Label>
         <div className="mt-1 relative">
@@ -87,6 +131,13 @@ const CommissionInputs: React.FC<CommissionInputsProps> = ({
           </div>
         </div>
       </div>
+      
+      {errors.commissionAmount && (
+        <Alert variant="destructive" className="py-2">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertDescription>{errors.commissionAmount}</AlertDescription>
+        </Alert>
+      )}
       
       <div>
         <Label htmlFor="commissionAmount">Commission Amount</Label>

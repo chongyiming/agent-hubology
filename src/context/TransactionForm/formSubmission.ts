@@ -74,8 +74,14 @@ export const submitTransactionForm = async (state: TransactionFormState): Promis
       validationErrors.push('Commission rate must be greater than 0');
     }
     
+    // Explicitly check commission amount is greater than zero
     if (!state.formData.commissionAmount || state.formData.commissionAmount <= 0) {
       validationErrors.push('Commission amount must be greater than 0');
+      console.error('Commission amount validation failed:', {
+        value: state.formData.commissionAmount,
+        transactionValue: state.formData.transactionValue,
+        commissionRate: state.formData.commissionRate
+      });
     }
     
     // Check payment schedule with detailed error message

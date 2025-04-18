@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTransactionForm } from '@/context/TransactionForm';
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,16 @@ const CommissionCalculation: React.FC = () => {
         clearError('paymentScheduleId');
       }
     }
-  }, [paymentSchedules, formData.paymentScheduleId, selectPaymentSchedule, clearError]);
+    
+    // Also validate the commission amount if available
+    if (formData.commissionAmount !== undefined) {
+      if (formData.commissionAmount <= 0) {
+        setError('commissionAmount', 'Commission amount must be greater than 0');
+      } else {
+        clearError('commissionAmount');
+      }
+    }
+  }, [paymentSchedules, formData.paymentScheduleId, formData.commissionAmount, selectPaymentSchedule, clearError, setError]);
   
   const handleTransactionValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTransactionValue(e.target.value);
@@ -38,6 +46,8 @@ const CommissionCalculation: React.FC = () => {
     if (!isNaN(numValue) && numValue > 0) {
       updateFormData({ transactionValue: numValue });
       clearError('transactionValue');
+    } else {
+      setError('transactionValue', 'Transaction value must be greater than 0');
     }
   };
   
@@ -48,6 +58,8 @@ const CommissionCalculation: React.FC = () => {
     if (!isNaN(numValue) && numValue > 0) {
       updateFormData({ commissionRate: numValue });
       clearError('commissionRate');
+    } else {
+      setError('commissionRate', 'Commission rate must be greater than 0');
     }
   };
   
@@ -56,6 +68,13 @@ const CommissionCalculation: React.FC = () => {
     if (formData.transactionValue && formData.commissionRate) {
       const commissionAmount = (formData.transactionValue * formData.commissionRate) / 100;
       updateFormData({ commissionAmount });
+      
+      // Validate commission amount
+      if (commissionAmount <= 0) {
+        setError('commissionAmount', 'Commission amount must be greater than 0');
+      } else {
+        clearError('commissionAmount');
+      }
     }
   };
   
@@ -72,6 +91,16 @@ const CommissionCalculation: React.FC = () => {
     if (!formData.commissionRate || formData.commissionRate <= 0) {
       setError('commissionRate', 'Commission rate must be greater than 0');
       valid = false;
+    }
+    
+    // Validate commission amount (explicitly calculate to be sure)
+    const calculatedAmount = (formData.transactionValue || 0) * (formData.commissionRate || 0) / 100;
+    if (calculatedAmount <= 0) {
+      setError('commissionAmount', 'Commission amount must be greater than 0');
+      valid = false;
+    } else {
+      // Ensure the form data has the correct commission amount
+      updateFormData({ commissionAmount: calculatedAmount });
     }
     
     // Validate payment schedule - this is critical
@@ -103,6 +132,13 @@ const CommissionCalculation: React.FC = () => {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{errors.commissionRate}</AlertDescription>
+        </Alert>
+      )}
+      
+      {errors.commissionAmount && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{errors.commissionAmount}</AlertDescription>
         </Alert>
       )}
       
