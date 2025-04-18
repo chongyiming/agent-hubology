@@ -24,14 +24,18 @@ export function useAdminTransactionRealtime() {
         (payload) => {
           switch (payload.eventType) {
             case 'INSERT':
-              toast.info('New transaction submitted for review');
+              toast.info('New transaction submitted for review', {
+                description: `Transaction ID: ${payload.new.id}`
+              });
               break;
             case 'UPDATE':
               const oldStatus = payload.old?.status;
               const newStatus = payload.new?.status;
               
               if (oldStatus !== newStatus) {
-                toast.info(`Transaction ${payload.new.id} status: ${newStatus}`);
+                toast.info(`Transaction status updated`, {
+                  description: `ID: ${payload.new.id} - New status: ${newStatus}`
+                });
               }
               break;
           }
@@ -40,10 +44,49 @@ export function useAdminTransactionRealtime() {
           queryClient.invalidateQueries({ queryKey: ['admin', 'transactions'] });
         }
       )
+      // Also listen for commission approval changes
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'commission_approvals'
+        },
+        (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            const newStatus = payload.new?.status;
+            toast.info('Commission approval updated', {
+              description: `Status: ${newStatus}`
+            });
+            queryClient.invalidateQueries({ queryKey: ['admin', 'commissions'] });
+          }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to commission installment updates
+    const installmentChannel = supabase.channel('admin_installment_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'commission_installments'
+        },
+        (payload) => {
+          if (payload.eventType === 'UPDATE' && payload.new?.status === 'paid') {
+            toast.success('Commission installment marked as paid', {
+              description: `Installment ID: ${payload.new.id}`
+            });
+            queryClient.invalidateQueries({ queryKey: ['admin', 'commissions'] });
+          }
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(adminChannel);
+      supabase.removeChannel(installmentChannel);
     };
   }, [user?.id, queryClient]);
 }
