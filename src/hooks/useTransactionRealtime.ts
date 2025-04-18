@@ -40,15 +40,25 @@ export function useTransactionRealtime() {
                   'approved': 'Transaction has been approved',
                   'rejected': 'Transaction has been rejected',
                   'completed': 'Transaction has been completed',
+                  'cancelled': 'Transaction has been cancelled',
                 };
                 
                 toast.info(statusMessages[newStatus] || `Status updated to: ${newStatus}`);
+              } else {
+                // Generic update message if not a status change
+                toast.info('Transaction details updated');
               }
+              break;
+            case 'DELETE':
+              toast.info('Transaction has been deleted');
               break;
           }
 
-          // Invalidate relevant queries
+          // Invalidate relevant queries to refresh data
           queryClient.invalidateQueries({ queryKey: ['transactions'] });
+          queryClient.invalidateQueries({ queryKey: ['transaction', payload.new?.id] });
+          queryClient.invalidateQueries({ queryKey: ['agentMetrics'] });
+          queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
         }
       )
       .on(
@@ -62,8 +72,21 @@ export function useTransactionRealtime() {
         (payload) => {
           if (payload.eventType === 'UPDATE') {
             const newStatus = payload.new?.status;
-            toast.info(`Commission approval status: ${newStatus}`);
+            const statusMessages: Record<string, string> = {
+              'Pending': 'Commission approval is awaiting review',
+              'Under Review': 'Commission approval is under review',
+              'Approved': 'Commission approval has been approved',
+              'Rejected': 'Commission approval has been rejected',
+              'Ready for Payment': 'Commission is ready for payment',
+              'Paid': 'Commission has been paid',
+            };
+            
+            toast.info(statusMessages[newStatus] || `Commission approval status: ${newStatus}`);
+            
+            // Invalidate relevant queries
             queryClient.invalidateQueries({ queryKey: ['commissions'] });
+            queryClient.invalidateQueries({ queryKey: ['commission', payload.new?.id] });
+            queryClient.invalidateQueries({ queryKey: ['commissionApprovals'] });
           }
         }
       )
@@ -84,8 +107,14 @@ export function useTransactionRealtime() {
             const newStatus = payload.new?.status;
             if (newStatus === 'paid') {
               toast.success('Commission installment has been paid');
+            } else if (newStatus === 'pending') {
+              toast.info('Commission installment is pending payment');
+            } else if (newStatus === 'delayed') {
+              toast.warning('Commission installment payment has been delayed');
             }
+            
             queryClient.invalidateQueries({ queryKey: ['commissionInstallments'] });
+            queryClient.invalidateQueries({ queryKey: ['agentCommission'] });
           }
         }
       )

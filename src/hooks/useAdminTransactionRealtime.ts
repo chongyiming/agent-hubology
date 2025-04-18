@@ -25,7 +25,11 @@ export function useAdminTransactionRealtime() {
           switch (payload.eventType) {
             case 'INSERT':
               toast.info('New transaction submitted for review', {
-                description: `Transaction ID: ${payload.new.id}`
+                description: `Transaction ID: ${payload.new.id.substring(0, 8)}...`,
+                action: {
+                  label: 'View',
+                  onClick: () => window.location.href = `/admin/transactions/${payload.new.id}`
+                }
               });
               break;
             case 'UPDATE':
@@ -34,14 +38,25 @@ export function useAdminTransactionRealtime() {
               
               if (oldStatus !== newStatus) {
                 toast.info(`Transaction status updated`, {
-                  description: `ID: ${payload.new.id} - New status: ${newStatus}`
+                  description: `ID: ${payload.new.id.substring(0, 8)}... - New status: ${newStatus}`,
+                  action: {
+                    label: 'View',
+                    onClick: () => window.location.href = `/admin/transactions/${payload.new.id}`
+                  }
                 });
               }
+              break;
+            case 'DELETE':
+              toast.info('Transaction has been deleted', {
+                description: `ID: ${payload.old.id.substring(0, 8)}...`
+              });
               break;
           }
 
           // Invalidate admin queries
           queryClient.invalidateQueries({ queryKey: ['admin', 'transactions'] });
+          queryClient.invalidateQueries({ queryKey: ['admin', 'metrics'] });
+          queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
         }
       )
       // Also listen for commission approval changes
@@ -55,10 +70,22 @@ export function useAdminTransactionRealtime() {
         (payload) => {
           if (payload.eventType === 'UPDATE') {
             const newStatus = payload.new?.status;
+            const urgency = newStatus === 'Pending' 
+              ? 'low' 
+              : newStatus === 'Under Review' 
+                ? 'medium' 
+                : 'high';
+            
             toast.info('Commission approval updated', {
-              description: `Status: ${newStatus}`
+              description: `Status: ${newStatus}`,
+              action: {
+                label: 'Review',
+                onClick: () => window.location.href = `/admin/approvals/${payload.new.id}`
+              }
             });
+            
             queryClient.invalidateQueries({ queryKey: ['admin', 'commissions'] });
+            queryClient.invalidateQueries({ queryKey: ['admin', 'approvals'] });
           }
         }
       )
@@ -76,10 +103,38 @@ export function useAdminTransactionRealtime() {
         (payload) => {
           if (payload.eventType === 'UPDATE' && payload.new?.status === 'paid') {
             toast.success('Commission installment marked as paid', {
-              description: `Installment ID: ${payload.new.id}`
+              description: `Installment ID: ${payload.new.id.substring(0, 8)}...`,
+              action: {
+                label: 'View',
+                onClick: () => window.location.href = `/admin/commissions/${payload.new.commission_id}`
+              }
             });
+            
             queryClient.invalidateQueries({ queryKey: ['admin', 'commissions'] });
+            queryClient.invalidateQueries({ queryKey: ['admin', 'installments'] });
+            queryClient.invalidateQueries({ queryKey: ['admin', 'financials'] });
           }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to document uploads
+    const documentsChannel = supabase.channel('admin_document_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'transaction_documents'
+        },
+        (payload) => {
+          toast.info('New document uploaded', {
+            description: `Document: ${payload.new.name}`,
+            action: {
+              label: 'View',
+              onClick: () => window.location.href = `/admin/transactions/${payload.new.transaction_id}`
+            }
+          });
         }
       )
       .subscribe();
@@ -87,6 +142,7 @@ export function useAdminTransactionRealtime() {
     return () => {
       supabase.removeChannel(adminChannel);
       supabase.removeChannel(installmentChannel);
+      supabase.removeChannel(documentsChannel);
     };
   }, [user?.id, queryClient]);
 }
