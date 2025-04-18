@@ -1,9 +1,10 @@
-
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CommissionTier } from '@/types/commission';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { CommissionTier } from '@/types';
 
 interface CommissionTiersProps {
   tiers: CommissionTier[];

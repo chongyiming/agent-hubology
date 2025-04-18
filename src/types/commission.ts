@@ -14,9 +14,9 @@ export interface CommissionBreakdown {
 
 export interface PaymentScheduleInstallment {
   id: string;
-  installmentNumber: number;
+  installment_number: number;
   percentage: number;
-  daysAfterTransaction: number;
+  days_after_transaction: number;
   description?: string;
 }
 
@@ -24,7 +24,7 @@ export interface PaymentSchedule {
   id: string;
   name: string;
   description?: string;
-  installmentCount: number;
+  installment_count: number;
   isDefault: boolean;
   installments: PaymentScheduleInstallment[];
 }
@@ -44,4 +44,62 @@ export interface CommissionInstallment {
   clerk_id?: string;
   created_at?: string;
   updated_at?: string;
+  // For nested relations from Supabase
+  transaction?: {
+    property?: {
+      title?: string;
+      address?: string;
+    };
+  };
+}
+
+// For use in forms and admin panels
+export interface ScheduleInstallment {
+  id: string;
+  scheduleId?: string;
+  installment_number: number;
+  percentage: number;
+  days_after_transaction: number;
+  description?: string;
+}
+
+export interface CommissionTier {
+  id: string;
+  name: string;
+  tier: string;
+  rate: number;
+  minTransactions: number;
+  color: string;
+  rank: string;
+  agentPercentage: number;
+  commissionRate: number;
+  requirements: any[];
+}
+
+export interface CommissionHistory {
+  id: string;
+  transactionReference: string;
+  transactionId: string;
+  property: string | {
+    title: string;
+    location: string;
+  };
+  date: string;
+  amount: number;
+  type: string;
+  source?: string;
+  status: string;
+}
+
+export interface OverrideCommission {
+  id: string;
+  agentId: string;
+  baseAgentId: string;
+  transactionId: string;
+  percentage: number;
+  amount: number;
+  status: string;
+  agentName: string;
+  rank: string;
+  tier: string;
 }

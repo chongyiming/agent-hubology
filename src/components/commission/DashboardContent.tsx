@@ -1,17 +1,17 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CommissionBreakdown from './CommissionBreakdown';
 import CommissionHistory from './CommissionHistory';
 import CommissionTiers from './CommissionTiers';
+import { CommissionHistory as CommissionHistoryType, CommissionTier } from '@/types/commission';
 import CommissionForecastChart from './CommissionForecastChart';
 import CommissionNotificationFeed from './CommissionNotificationFeed';
 import PaymentScheduleDetail from './PaymentScheduleDetail';
 import useAuth from '@/hooks/useAuth';
 import { useForecastCalculation } from '@/hooks/useForecastCalculation';
 import { usePaymentSchedules } from '@/hooks/usePaymentSchedules';
-import { AgentWithHierarchy, CommissionHistory as CommissionHistoryType, CommissionTier } from '@/types';
+import { AgentWithHierarchy } from '@/types';
 
 interface DashboardContentProps {
   commissionTiers: CommissionTier[];

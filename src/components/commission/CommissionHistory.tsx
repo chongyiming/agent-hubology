@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Clock, DollarSign } from 'lucide-react';
 import { formatCurrency } from '@/utils/propertyUtils';
-import { CommissionHistory } from '@/types';
+import { CommissionHistory } from '@/types/commission';
 
 interface CommissionHistoryProps {
   commissions: CommissionHistory[];

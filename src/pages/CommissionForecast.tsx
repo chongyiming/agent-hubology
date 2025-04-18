@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useCommissionForecast } from '@/hooks/useUpcomingPayments';
@@ -114,7 +113,7 @@ const CommissionForecast: React.FC = () => {
                             {installment.transaction?.property?.title || 'Unknown Property'}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            Installment {installment.installmentNumber} ({installment.percentage}%)
+                            Installment {installment.installment_number} ({installment.percentage}%)
                           </p>
                         </div>
                         <Badge className={getStatusBadgeClasses(installment.status)}>
@@ -130,7 +129,7 @@ const CommissionForecast: React.FC = () => {
                         <div>
                           <p className="text-sm text-muted-foreground">Scheduled Date</p>
                           <p className="font-semibold">
-                            {format(parseISO(installment.scheduledDate), 'MMMM d, yyyy')}
+                            {format(parseISO(installment.scheduled_date), 'MMMM d, yyyy')}
                           </p>
                         </div>
                         <div>

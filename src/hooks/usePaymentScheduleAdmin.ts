@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { PaymentSchedule, ScheduleInstallment } from '@/types/commission';
@@ -23,15 +22,14 @@ export const usePaymentScheduleAdmin = () => {
           id: schedule.id,
           name: schedule.name,
           description: schedule.description,
+          installment_count: schedule.installment_count || 0,
           isDefault: schedule.is_default,
-          createdAt: schedule.created_at,
-          updatedAt: schedule.updated_at,
           installments: schedule.installments.map((inst: any) => ({
             id: inst.id,
             scheduleId: inst.schedule_id,
-            installmentNumber: inst.installment_number,
+            installment_number: inst.installment_number,
             percentage: inst.percentage,
-            daysAfterTransaction: inst.days_after_transaction,
+            days_after_transaction: inst.days_after_transaction,
             description: inst.description
           }))
         })) as PaymentSchedule[];

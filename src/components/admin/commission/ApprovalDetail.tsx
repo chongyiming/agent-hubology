@@ -216,11 +216,11 @@ const ApprovalDetail: React.FC<ApprovalDetailProps> = ({ id }) => {
                     <tbody>
                       {data.installments.map((installment) => (
                         <tr key={installment.id} className="border-b">
-                          <td className="py-2">{installment.installmentNumber}</td>
+                          <td className="py-2">{installment.installment_number}</td>
                           <td className="py-2">{formatCurrency(installment.amount)}</td>
                           <td className="py-2">{installment.percentage}%</td>
                           <td className="py-2">
-                            {new Date(installment.scheduledDate).toLocaleDateString()}
+                            {new Date(installment.scheduled_date).toLocaleDateString()}
                           </td>
                           <td className="py-2">{installment.status}</td>
                         </tr>

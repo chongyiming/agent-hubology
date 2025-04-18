@@ -64,15 +64,15 @@ const UpcomingPayments: React.FC<UpcomingPaymentsProps> = ({ onViewAll }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
-                    {payment.transaction?.property?.title || `Transaction #${payment.transactionId.substring(0, 8)}`}
+                    {payment.transaction?.property?.title || `Transaction #${payment.transaction_id?.substring(0, 8)}`}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {payment.scheduledDate ? format(parseISO(payment.scheduledDate), 'MMM dd, yyyy') : 'Date not set'}
+                    {payment.scheduled_date ? format(parseISO(payment.scheduled_date), 'MMM dd, yyyy') : 'Date not set'}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">{formatCurrency(payment.amount)}</p>
-                  <p className="text-xs text-muted-foreground">Installment {payment.installmentNumber}</p>
+                  <p className="text-xs text-muted-foreground">Installment {payment.installment_number}</p>
                 </div>
               </div>
             ))}
