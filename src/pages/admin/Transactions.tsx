@@ -5,8 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Filter, SortDesc, FileText, DollarSign, AlertCircle, CheckCircle2, Clock, ArrowUpDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAdminTransactionRealtime } from '@/hooks/useAdminTransactionRealtime';
 
 const AdminTransactions = () => {
+  useAdminTransactionRealtime();
+
   const transactions = [
     { 
       id: 'TRX-001', 

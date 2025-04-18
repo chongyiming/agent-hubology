@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TransactionFormProvider } from '@/context/TransactionForm';
@@ -6,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useTransactionRealtime } from '@/hooks/useTransactionRealtime';
 
 // Form step components
 import TransactionTypeSelector from './form/TransactionTypeSelector';
@@ -170,6 +170,9 @@ const TransactionStepContent: React.FC<{
 
 // Main exported component that wraps everything in the required provider
 const EnhancedTransactionForm: React.FC = () => {
+  // Add realtime updates
+  useTransactionRealtime();
+
   return (
     <TransactionFormProvider>
       <TransactionFormSteps />
