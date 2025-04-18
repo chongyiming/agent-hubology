@@ -24,19 +24,22 @@ export function useAdminTransactionRealtime() {
         (payload) => {
           switch (payload.eventType) {
             case 'INSERT':
-              toast.info('New transaction submitted for review', {
-                description: `Transaction ID: ${payload.new.id.substring(0, 8)}...`,
-                action: {
-                  label: 'View',
-                  onClick: () => window.location.href = `/admin/transactions/${payload.new.id}`
-                }
-              });
+              // Ensure payload.new exists and has an id before accessing it
+              if (payload.new && 'id' in payload.new) {
+                toast.info('New transaction submitted for review', {
+                  description: `Transaction ID: ${payload.new.id.substring(0, 8)}...`,
+                  action: {
+                    label: 'View',
+                    onClick: () => window.location.href = `/admin/transactions/${payload.new.id}`
+                  }
+                });
+              }
               break;
             case 'UPDATE':
               const oldStatus = payload.old?.status;
               const newStatus = payload.new?.status;
               
-              if (oldStatus !== newStatus) {
+              if (oldStatus !== newStatus && payload.new && 'id' in payload.new) {
                 toast.info(`Transaction status updated`, {
                   description: `ID: ${payload.new.id.substring(0, 8)}... - New status: ${newStatus}`,
                   action: {
@@ -47,9 +50,12 @@ export function useAdminTransactionRealtime() {
               }
               break;
             case 'DELETE':
-              toast.info('Transaction has been deleted', {
-                description: `ID: ${payload.old.id.substring(0, 8)}...`
-              });
+              // Ensure payload.old exists and has an id before accessing it
+              if (payload.old && 'id' in payload.old) {
+                toast.info('Transaction has been deleted', {
+                  description: `ID: ${payload.old.id.substring(0, 8)}...`
+                });
+              }
               break;
           }
 
@@ -68,7 +74,7 @@ export function useAdminTransactionRealtime() {
           table: 'commission_approvals'
         },
         (payload) => {
-          if (payload.eventType === 'UPDATE') {
+          if (payload.eventType === 'UPDATE' && payload.new) {
             const newStatus = payload.new?.status;
             const urgency = newStatus === 'Pending' 
               ? 'low' 
@@ -76,13 +82,15 @@ export function useAdminTransactionRealtime() {
                 ? 'medium' 
                 : 'high';
             
-            toast.info('Commission approval updated', {
-              description: `Status: ${newStatus}`,
-              action: {
-                label: 'Review',
-                onClick: () => window.location.href = `/admin/approvals/${payload.new.id}`
-              }
-            });
+            if ('id' in payload.new) {
+              toast.info('Commission approval updated', {
+                description: `Status: ${newStatus}`,
+                action: {
+                  label: 'Review',
+                  onClick: () => window.location.href = `/admin/approvals/${payload.new.id}`
+                }
+              });
+            }
             
             queryClient.invalidateQueries({ queryKey: ['admin', 'commissions'] });
             queryClient.invalidateQueries({ queryKey: ['admin', 'approvals'] });
@@ -101,7 +109,8 @@ export function useAdminTransactionRealtime() {
           table: 'commission_installments'
         },
         (payload) => {
-          if (payload.eventType === 'UPDATE' && payload.new?.status === 'paid') {
+          if (payload.eventType === 'UPDATE' && payload.new && 'id' in payload.new && payload.new?.status === 'paid') {
+            // Safe access to id property
             toast.success('Commission installment marked as paid', {
               description: `Installment ID: ${payload.new.id.substring(0, 8)}...`,
               action: {
@@ -128,13 +137,15 @@ export function useAdminTransactionRealtime() {
           table: 'transaction_documents'
         },
         (payload) => {
-          toast.info('New document uploaded', {
-            description: `Document: ${payload.new.name}`,
-            action: {
-              label: 'View',
-              onClick: () => window.location.href = `/admin/transactions/${payload.new.transaction_id}`
-            }
-          });
+          if (payload.new && 'name' in payload.new && 'transaction_id' in payload.new) {
+            toast.info('New document uploaded', {
+              description: `Document: ${payload.new.name}`,
+              action: {
+                label: 'View',
+                onClick: () => window.location.href = `/admin/transactions/${payload.new.transaction_id}`
+              }
+            });
+          }
         }
       )
       .subscribe();

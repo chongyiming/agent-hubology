@@ -56,7 +56,12 @@ export function useTransactionRealtime() {
 
           // Invalidate relevant queries to refresh data
           queryClient.invalidateQueries({ queryKey: ['transactions'] });
-          queryClient.invalidateQueries({ queryKey: ['transaction', payload.new?.id] });
+          
+          // Fix the TypeScript error by checking if payload.new exists and has an id property
+          if (payload.new && 'id' in payload.new) {
+            queryClient.invalidateQueries({ queryKey: ['transaction', payload.new.id] });
+          }
+          
           queryClient.invalidateQueries({ queryKey: ['agentMetrics'] });
           queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
         }
@@ -85,7 +90,12 @@ export function useTransactionRealtime() {
             
             // Invalidate relevant queries
             queryClient.invalidateQueries({ queryKey: ['commissions'] });
-            queryClient.invalidateQueries({ queryKey: ['commission', payload.new?.id] });
+            
+            // Also fix this potential type error by checking if payload.new exists and has an id
+            if (payload.new && 'id' in payload.new) {
+              queryClient.invalidateQueries({ queryKey: ['commission', payload.new.id] });
+            }
+            
             queryClient.invalidateQueries({ queryKey: ['commissionApprovals'] });
           }
         }
