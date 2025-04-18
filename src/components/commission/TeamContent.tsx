@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { AgentWithHierarchy } from '@/types';
+import { AgentWithHierarchy } from '@/types/user';
 import AgentHierarchyChart from './AgentHierarchyChart';
 import AgentDetails from './AgentDetails';
 

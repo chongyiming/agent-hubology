@@ -8,7 +8,8 @@ import CommissionMetrics from '@/components/commission/CommissionMetrics';
 import DashboardContent from '@/components/commission/DashboardContent';
 import TeamContent from '@/components/commission/TeamContent';
 import { useCommissionTiers, useAgentHierarchy } from '@/hooks/useCommission';
-import { CommissionHistory, CommissionTier, AgentWithHierarchy } from '@/types/commission';
+import { AgentWithHierarchy } from '@/types/user';
+import { CommissionHistory, CommissionTier } from '@/types/commission';
 import SendTestNotification from '@/components/commission/SendTestNotification';
 
 // Sample commission tiers for fallback when API fails
@@ -215,7 +216,7 @@ const Commission = () => {
           <DashboardContent 
             commissionTiers={commissionTiers} 
             commissions={recentCommissions} 
-            agentHierarchy={agentHierarchy} 
+            agentHierarchy={agentHierarchy as AgentWithHierarchy} 
           />
           
           {showTestTools && <SendTestNotification />}
@@ -223,7 +224,7 @@ const Commission = () => {
         
         <TabsContent value="team" className="space-y-6">
           <TeamContent 
-            agentHierarchy={agentHierarchy} 
+            agentHierarchy={agentHierarchy as AgentWithHierarchy} 
             selectedAgent={selectedAgent} 
             onAgentClick={handleAgentClick} 
             isLoading={isLoadingHierarchy} 

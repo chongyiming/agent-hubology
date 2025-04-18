@@ -1,4 +1,3 @@
-
 /**
  * Types related to commission calculations and payment schedules
  */
@@ -104,24 +103,8 @@ export interface OverrideCommission {
   tier: string;
 }
 
-// Agent types
-export type AgentRank = 'Advisor' | 'Sales Leader' | 'Team Leader' | 'Group Leader' | 'Supreme Leader' | 'Associate' | 'Senior Associate' | 'Director';
+// We're using the AgentRank and AgentWithHierarchy from user.ts instead of duplicating them here
+import { AgentRank } from './user';
 
-export interface AgentWithHierarchy {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  avatar?: string;
-  rank: string;
-  tier: string;
-  joinDate?: string;
-  transactions?: number;
-  salesVolume?: number;
-  personalCommission?: number;
-  overrideCommission?: number;
-  totalCommission?: number;
-  commission?: number;
-  upline?: AgentWithHierarchy;
-  downline: AgentWithHierarchy[];
-}
+// However, we'll keep the references to these types to maintain backward compatibility with existing code
+export type { AgentRank };
