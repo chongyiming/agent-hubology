@@ -1,8 +1,19 @@
 
-// Payment schedule types
-export interface ScheduleInstallment {
+/**
+ * Types related to commission calculations and payment schedules
+ */
+
+export interface CommissionBreakdown {
+  totalCommission: number;
+  agentCommission: number;
+  agencyCommission: number;
+  agentPercentage: number;
+  agencyPercentage: number;
+  overrideCommission?: number;
+}
+
+export interface PaymentScheduleInstallment {
   id: string;
-  scheduleId: string;
   installmentNumber: number;
   percentage: number;
   daysAfterTransaction: number;
@@ -13,75 +24,24 @@ export interface PaymentSchedule {
   id: string;
   name: string;
   description?: string;
+  installmentCount: number;
   isDefault: boolean;
-  createdAt: string;
-  updatedAt: string;
-  installments: ScheduleInstallment[];
+  installments: PaymentScheduleInstallment[];
 }
 
-// Commission installment types
 export interface CommissionInstallment {
   id: string;
-  transactionId: string;
-  installmentNumber: number;
+  commission_id?: string;
+  transaction_id?: string;
+  installment_number: number;
   amount: number;
   percentage: number;
-  scheduledDate: string;
-  actualPaymentDate?: string;
+  scheduled_date: string;
+  due_date: string;
+  actual_payment_date?: string;
   status: string;
-  agentId: string;
-  createdAt: string;
-  updatedAt: string;
-  notes?: string;
-  transaction?: {
-    property?: {
-      title?: string;
-      address?: string;
-    };
-    agent?: {
-      first_name?: string;
-      last_name?: string;
-    };
-  };
-}
-
-// Commission history type
-export interface CommissionHistory {
-  id: string;
-  transactionId: string;
-  transactionReference?: string;
-  property: string | { title: string; location: string };
-  date: string;
-  amount: number;
-  type: 'personal' | 'override';
-  source?: string;
-  status: string;
-}
-
-// Commission tier type
-export interface CommissionTier {
-  id: string;
-  name: string;
-  tier: string;
-  rate: number;
-  minTransactions: number;
-  color: string;
-  rank: string;
-  agentPercentage: number;
-  commissionRate: number;
-  requirements: string[];
-}
-
-// Override commission type
-export interface OverrideCommission {
-  id: string;
-  agentId: string;
-  baseAgentId: string;
-  transactionId: string;
-  percentage: number;
-  amount: number;
-  status: string;
-  agentName: string;
-  rank: string;
-  tier: string;
+  agent_id?: string;
+  clerk_id?: string;
+  created_at?: string;
+  updated_at?: string;
 }

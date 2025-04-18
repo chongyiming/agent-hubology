@@ -1,63 +1,44 @@
 
 /**
- * Utility functions for handling commission schedules and installments
+ * Utility functions for formatting and calculating commission-related values
  */
 
-/**
- * Format a currency value
- * @param value The numeric value to format
- */
-export const formatCurrency = (value: number | string): string => {
-  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+// Format currency values to USD format
+export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  }).format(numValue);
+  }).format(amount);
 };
 
-/**
- * Calculate installment amounts for a commission
- * @param commissionAmount The total commission amount
- * @param percentageArray Array of percentage values
- */
-export const calculateInstallmentAmounts = (
-  commissionAmount: number,
-  percentageArray: number[]
-): number[] => {
-  return percentageArray.map(percentage => {
-    const amount = (commissionAmount * percentage) / 100;
-    return Math.round(amount * 100) / 100; // Round to 2 decimal places
+// Format percentage values
+export const formatPercentage = (percentage: number): string => {
+  return `${percentage.toFixed(2)}%`;
+};
+
+// Calculate days between two dates
+export const calculateDaysDifference = (date1: Date, date2: Date): number => {
+  const diffTime = Math.abs(date2.getTime() - date1.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+
+// Calculate due date from transaction date and days after
+export const calculateDueDate = (transactionDate: Date, daysAfter: number): Date => {
+  const dueDate = new Date(transactionDate);
+  dueDate.setDate(dueDate.getDate() + daysAfter);
+  return dueDate;
+};
+
+// Format date to display format
+export const formatDate = (date: Date | string): string => {
+  if (!date) return '';
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   });
-};
-
-/**
- * Check if installment percentages sum to 100%
- * @param percentageArray Array of percentage values
- */
-export const validateInstallmentPercentages = (
-  percentageArray: number[]
-): boolean => {
-  const sum = percentageArray.reduce((acc, cur) => acc + cur, 0);
-  return Math.round(sum) === 100;
-};
-
-/**
- * Get a status badge color based on installment status
- * @param status Installment status
- */
-export const getInstallmentStatusColor = (status: string): string => {
-  switch (status) {
-    case 'Paid':
-      return 'bg-green-500';
-    case 'Processing':
-      return 'bg-blue-500';
-    case 'Pending':
-      return 'bg-yellow-500';
-    case 'Projected':
-      return 'bg-gray-500';
-    default:
-      return 'bg-gray-500';
-  }
 };
