@@ -10,7 +10,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { format, parseISO, isBefore } from 'date-fns';
-import { PaymentSchedule, ScheduleInstallment } from '@/types/commission';
+import { PaymentSchedule, PaymentScheduleInstallment } from '@/types/commission';
 import { formatCurrency } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -82,7 +82,7 @@ const PaymentScheduleDetail: React.FC<PaymentScheduleDetailProps> = ({
   
   // Sort installments by number
   const sortedInstallments = [...(schedule.installments || [])].sort(
-    (a, b) => a.installmentNumber - b.installmentNumber
+    (a, b) => a.installment_number - b.installment_number
   );
   
   return (
@@ -120,7 +120,7 @@ const PaymentScheduleDetail: React.FC<PaymentScheduleDetailProps> = ({
               {/* Installments */}
               <div className="space-y-8">
                 {sortedInstallments.map((installment) => {
-                  const expectedDate = getExpectedDate(installment.daysAfterTransaction);
+                  const expectedDate = getExpectedDate(installment.days_after_transaction);
                   const isPast = isBefore(expectedDate, today);
                   const amount = (commissionAmount * installment.percentage) / 100;
                   
@@ -136,7 +136,7 @@ const PaymentScheduleDetail: React.FC<PaymentScheduleDetailProps> = ({
                       
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium">Installment {installment.installmentNumber}</h4>
+                          <h4 className="font-medium">Installment {installment.installment_number}</h4>
                           <span className="font-bold">{formatCurrency(amount)}</span>
                         </div>
                         
@@ -147,7 +147,7 @@ const PaymentScheduleDetail: React.FC<PaymentScheduleDetailProps> = ({
                           <span className="text-sm">
                             {format(expectedDate, 'MMMM dd, yyyy')}
                             <span className="text-muted-foreground ml-1">
-                              ({installment.daysAfterTransaction} days after transaction)
+                              ({installment.days_after_transaction} days after transaction)
                             </span>
                           </span>
                         </div>

@@ -51,7 +51,7 @@ const InstallmentsList: React.FC<InstallmentsListProps> = ({
   
   // Sort installments by number
   const sortedInstallments = [...installments].sort(
-    (a, b) => a.installmentNumber - b.installmentNumber
+    (a, b) => a.installment_number - b.installment_number
   );
   
   // Helper function to calculate estimated date if baseDate is provided
@@ -79,15 +79,15 @@ const InstallmentsList: React.FC<InstallmentsListProps> = ({
       </TableHeader>
       <TableBody>
         {sortedInstallments.map((installment) => {
-          const estimatedDate = getEstimatedDate(installment.daysAfterTransaction);
+          const estimatedDate = getEstimatedDate(installment.days_after_transaction);
           return (
             <TableRow key={installment.id}>
-              <TableCell>{installment.installmentNumber}</TableCell>
+              <TableCell>{installment.installment_number}</TableCell>
               <TableCell>{installment.percentage}%</TableCell>
               {showAmountColumn && (
                 <TableCell>{formatCurrency(calculateAmount(installment.percentage))}</TableCell>
               )}
-              <TableCell>{installment.daysAfterTransaction} days</TableCell>
+              <TableCell>{installment.days_after_transaction} days</TableCell>
               {baseDate && (
                 <TableCell>
                   {estimatedDate ? format(estimatedDate, 'MMM d, yyyy') : '-'}

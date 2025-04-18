@@ -190,13 +190,13 @@ const ScheduleDetails: React.FC<{
         ) : (
           <div className="space-y-2">
             {schedule.installments
-              .sort((a, b) => a.installmentNumber - b.installmentNumber)
+              .sort((a, b) => a.installment_number - b.installment_number)
               .map((installment) => (
                 <div key={installment.id} className="flex justify-between items-center p-2 bg-secondary/30 rounded">
                   <div>
-                    <p className="font-medium">Installment {installment.installmentNumber}</p>
+                    <p className="font-medium">Installment {installment.installment_number}</p>
                     <p className="text-xs text-muted-foreground">
-                      {installment.daysAfterTransaction} days after transaction
+                      {installment.days_after_transaction} days after transaction
                     </p>
                   </div>
                   <div className="text-right">

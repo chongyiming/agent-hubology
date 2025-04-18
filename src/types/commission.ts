@@ -103,3 +103,25 @@ export interface OverrideCommission {
   rank: string;
   tier: string;
 }
+
+// Agent types
+export type AgentRank = 'Advisor' | 'Sales Leader' | 'Team Leader' | 'Group Leader' | 'Supreme Leader' | 'Associate' | 'Senior Associate' | 'Director';
+
+export interface AgentWithHierarchy {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  rank: string;
+  tier: string;
+  joinDate?: string;
+  transactions?: number;
+  salesVolume?: number;
+  personalCommission?: number;
+  overrideCommission?: number;
+  totalCommission?: number;
+  commission?: number;
+  upline?: AgentWithHierarchy;
+  downline: AgentWithHierarchy[];
+}

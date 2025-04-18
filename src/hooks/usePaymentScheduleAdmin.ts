@@ -1,3 +1,4 @@
+
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { PaymentSchedule, ScheduleInstallment } from '@/types/commission';
@@ -64,9 +65,9 @@ export const usePaymentScheduleAdmin = () => {
       // Then create the installments
       const installmentsWithScheduleId = schedule.installments.map(installment => ({
         schedule_id: scheduleId,
-        installment_number: installment.installmentNumber,
+        installment_number: installment.installment_number,
         percentage: installment.percentage,
-        days_after_transaction: installment.daysAfterTransaction,
+        days_after_transaction: installment.days_after_transaction,
         description: installment.description
       }));
       
@@ -123,9 +124,9 @@ export const usePaymentScheduleAdmin = () => {
       // Create new installments
       const installmentsWithScheduleId = schedule.installments.map(installment => ({
         schedule_id: scheduleId,
-        installment_number: installment.installmentNumber,
+        installment_number: installment.installment_number,
         percentage: installment.percentage,
-        days_after_transaction: installment.daysAfterTransaction,
+        days_after_transaction: installment.days_after_transaction,
         description: installment.description
       }));
       

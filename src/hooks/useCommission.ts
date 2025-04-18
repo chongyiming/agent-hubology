@@ -1,6 +1,7 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { commissionApi } from '@/lib/api';
-import { CommissionTier, OverrideCommission } from '@/types/commission';
+import { CommissionTier, OverrideCommission, AgentWithHierarchy, AgentRank } from '@/types/commission';
 import { stringToAgentRank } from '@/utils/typeConversions';
 
 // Get commission summary (current month, previous month, year to date)

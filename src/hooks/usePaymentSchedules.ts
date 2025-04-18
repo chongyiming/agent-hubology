@@ -1,7 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { PaymentSchedule } from '@/types/commission';
+import { PaymentSchedule, PaymentScheduleInstallment } from '@/types/commission';
 
 // Fetches payment schedules from Supabase
 const fetchPaymentSchedules = async (): Promise<PaymentSchedule[]> => {
@@ -40,13 +40,13 @@ const fetchPaymentSchedules = async (): Promise<PaymentSchedule[]> => {
       id: schedule.id,
       name: schedule.name,
       description: schedule.description || undefined,
-      installmentCount: schedule.installment_count || 0,
+      installment_count: schedule.installment_count || 0,
       isDefault: schedule.is_default || false,
       installments: schedule.installments?.map(installment => ({
         id: installment.id,
-        installmentNumber: installment.installment_number,
+        installment_number: installment.installment_number,
         percentage: installment.percentage,
-        daysAfterTransaction: installment.days_after_transaction,
+        days_after_transaction: installment.days_after_transaction,
         description: installment.description
       })) || []
     }));
@@ -63,21 +63,21 @@ const getFallbackSchedules = (): PaymentSchedule[] => {
       id: 'default-schedule',
       name: 'Standard Payment Schedule',
       description: 'Default payment schedule with two installments',
-      installmentCount: 2,
+      installment_count: 2,
       isDefault: true,
       installments: [
         {
           id: 'default-installment-1',
-          installmentNumber: 1,
+          installment_number: 1,
           percentage: 50,
-          daysAfterTransaction: 30,
+          days_after_transaction: 30,
           description: '50% after 30 days'
         },
         {
           id: 'default-installment-2',
-          installmentNumber: 2,
+          installment_number: 2,
           percentage: 50,
-          daysAfterTransaction: 60,
+          days_after_transaction: 60,
           description: 'Remaining 50% after 60 days'
         }
       ]

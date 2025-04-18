@@ -33,7 +33,7 @@ const PaymentScheduleForm: React.FC<PaymentScheduleFormProps> = ({
   const [scheduleName, setScheduleName] = useState('');
   const [scheduleDescription, setScheduleDescription] = useState('');
   const [installments, setInstallments] = useState<Partial<ScheduleInstallment>[]>([
-    { installmentNumber: 1, percentage: 100, daysAfterTransaction: 0 }
+    { installment_number: 1, percentage: 100, days_after_transaction: 0 }
   ]);
 
   // Initialize form state from schedule if provided
@@ -47,11 +47,11 @@ const PaymentScheduleForm: React.FC<PaymentScheduleFormProps> = ({
 
   const handleAddInstallment = () => {
     const lastInstallment = installments[installments.length - 1];
-    const newInstallmentNumber = (lastInstallment?.installmentNumber || 0) + 1;
+    const newInstallmentNumber = (lastInstallment?.installment_number || 0) + 1;
     
     setInstallments([
       ...installments, 
-      { installmentNumber: newInstallmentNumber, percentage: 0, daysAfterTransaction: 0 }
+      { installment_number: newInstallmentNumber, percentage: 0, days_after_transaction: 0 }
     ]);
   };
   
@@ -62,7 +62,7 @@ const PaymentScheduleForm: React.FC<PaymentScheduleFormProps> = ({
     // Renumber installments
     const renumberedInstallments = newInstallments.map((inst, idx) => ({
       ...inst,
-      installmentNumber: idx + 1
+      installment_number: idx + 1
     }));
     
     setInstallments(renumberedInstallments);
@@ -137,7 +137,7 @@ const PaymentScheduleForm: React.FC<PaymentScheduleFormProps> = ({
             <TableBody>
               {installments.map((installment, index) => (
                 <TableRow key={index}>
-                  <TableCell>{installment.installmentNumber}</TableCell>
+                  <TableCell>{installment.installment_number}</TableCell>
                   <TableCell>
                     <Input
                       type="number"
@@ -151,8 +151,8 @@ const PaymentScheduleForm: React.FC<PaymentScheduleFormProps> = ({
                   <TableCell>
                     <Input
                       type="number"
-                      value={installment.daysAfterTransaction}
-                      onChange={(e) => handleInstallmentChange(index, 'daysAfterTransaction', Number(e.target.value))}
+                      value={installment.days_after_transaction}
+                      onChange={(e) => handleInstallmentChange(index, 'days_after_transaction', Number(e.target.value))}
                       min="0"
                       className="w-20"
                     />

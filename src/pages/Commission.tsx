@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import CommissionMetrics from '@/components/commission/CommissionMetrics';
 import DashboardContent from '@/components/commission/DashboardContent';
 import TeamContent from '@/components/commission/TeamContent';
 import { useCommissionTiers, useAgentHierarchy } from '@/hooks/useCommission';
-import { CommissionHistory, CommissionTier } from '@/types/commission';
+import { CommissionHistory, CommissionTier, AgentWithHierarchy } from '@/types/commission';
 import SendTestNotification from '@/components/commission/SendTestNotification';
 
 // Sample commission tiers for fallback when API fails
