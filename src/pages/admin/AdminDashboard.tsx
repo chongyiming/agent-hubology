@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,8 +9,12 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAdminPerformanceRealtime } from '@/hooks/useAdminPerformanceRealtime';
 
 const AdminDashboard = () => {
+  // Add real-time performance updates
+  useAdminPerformanceRealtime();
+  
   const navigate = useNavigate();
   const { data: metricsData, isLoading: isLoadingMetrics } = useMetrics();
   const { useTransactionsQuery, useRealtimeTransactions } = useTransactions();

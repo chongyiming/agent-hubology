@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import MetricsContainer from '@/components/dashboard/MetricsContainer';
@@ -10,8 +9,10 @@ import { Building2, Trophy } from 'lucide-react';
 import { DashboardMetric } from '@/types';
 import { Card, CardContent } from "@/components/ui/card";
 import { useAgentCommission, useAgentLeaderboardPosition, formatCurrency } from '@/hooks/useAgentDashboardMetrics';
+import { useAgentPerformanceRealtime } from '@/hooks/useAgentPerformanceRealtime';
 
 const Dashboard: React.FC = () => {
+  useAgentPerformanceRealtime();
   const navigate = useNavigate();
   const { data: commissionData, isLoading: isLoadingCommission } = useAgentCommission();
   const { leaderboardPosition, isLoading: isLoadingLeaderboard } = useAgentLeaderboardPosition();
